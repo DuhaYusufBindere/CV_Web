@@ -657,11 +657,11 @@ function visibleWatcher(el){const s={v:true};new IntersectionObserver(([e])=>s.v
   // ── Hürtürk İHA: twin-boom pusher, high straight wing, tricycle gear (nose → +x) ──
   const plane=new THREE.Group();const body=new THREE.Group();body.position.x=.94;plane.add(body);
   // pod fuselage (lathe, slightly flattened)
-  const prof=[[0,1.1],[.17,1.06],[.29,.97],[.37,.84],[.42,.66],[.44,.4],[.42,.1],[.36,-.25],[.27,-.55],[.18,-.8],[.11,-1.0],[.08,-1.1]].map(([r,y])=>new THREE.Vector2(r,y));
+  const prof=[[0,1.1],[.17,1.06],[.29,.97],[.37,.84],[.42,.66],[.44,.4],[.42,.1],[.36,-.25],[.27,-.55],[.18,-.8],[.11,-1.0],[.08,-1.08],[0,-1.1]].map(([r,y])=>new THREE.Vector2(r,y));
   const profC=new THREE.SplineCurve(prof).getPoints(40);
   const podG=new THREE.LatheGeometry(profC,48);podG.rotateZ(-Math.PI/2);podG.scale(1.45,.78,1);
   const pod=new THREE.Group();pod.position.set(-.275,-.12,0);body.add(pod);
-  pod.add(new THREE.Mesh(podG,new THREE.MeshBasicMaterial({color:0x22211d,polygonOffset:true,polygonOffsetFactor:1,polygonOffsetUnits:1})));
+  pod.add(new THREE.Mesh(podG,new THREE.MeshBasicMaterial({color:0x22211d,side:THREE.DoubleSide,polygonOffset:true,polygonOffsetFactor:1,polygonOffsetUnits:1})));
   const podLine=new THREE.LineBasicMaterial({color:0x9d998d});
   const P=(r,y,f)=>new THREE.Vector3(y*1.45,-r*Math.sin(f)*.78,r*Math.cos(f));
   for(let k=0;k<8;k++){const f=k/8*Math.PI*2;pod.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(profC.map(v=>P(v.x,v.y,f))),podLine));}
