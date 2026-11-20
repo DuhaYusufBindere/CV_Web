@@ -655,56 +655,56 @@ function visibleWatcher(el){const s={v:true};new IntersectionObserver(([e])=>s.v
   function part(geo,line=lineInk,f=fill){const g=new THREE.Group();g.add(new THREE.Mesh(geo,f));g.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo,18),line));return g;}
 
   // ── Hürtürk İHA: twin-boom pusher, high straight wing, tricycle gear (nose → +x) ──
-  const plane=new THREE.Group();const body=new THREE.Group();body.position.x=.72;plane.add(body);
+  const plane=new THREE.Group();const body=new THREE.Group();body.position.x=.94;plane.add(body);
   // pod fuselage (lathe, slightly flattened)
   const prof=[[0,1.1],[.17,1.06],[.29,.97],[.37,.84],[.42,.66],[.44,.4],[.42,.1],[.36,-.25],[.27,-.55],[.18,-.8],[.11,-1.0],[.08,-1.1]].map(([r,y])=>new THREE.Vector2(r,y));
   const profC=new THREE.SplineCurve(prof).getPoints(40);
-  const podG=new THREE.LatheGeometry(profC,48);podG.rotateZ(-Math.PI/2);podG.scale(1,.78,1);
-  const pod=new THREE.Group();pod.position.set(.3,-.12,0);body.add(pod);
+  const podG=new THREE.LatheGeometry(profC,48);podG.rotateZ(-Math.PI/2);podG.scale(1.45,.78,1);
+  const pod=new THREE.Group();pod.position.set(-.275,-.12,0);body.add(pod);
   pod.add(new THREE.Mesh(podG,new THREE.MeshBasicMaterial({color:0x22211d,polygonOffset:true,polygonOffsetFactor:1,polygonOffsetUnits:1})));
   const podLine=new THREE.LineBasicMaterial({color:0x9d998d});
-  const P=(r,y,f)=>new THREE.Vector3(y,-r*Math.sin(f)*.78,r*Math.cos(f));
+  const P=(r,y,f)=>new THREE.Vector3(y*1.45,-r*Math.sin(f)*.78,r*Math.cos(f));
   for(let k=0;k<8;k++){const f=k/8*Math.PI*2;pod.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(profC.map(v=>P(v.x,v.y,f))),podLine));}
   [6,12,20,28,34].forEach(i=>{const v=profC[i],pts=[];for(let k=0;k<=48;k++)pts.push(P(v.x*1.004,v.y,k/48*Math.PI*2));pod.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),podLine));});
   // high wing with airfoil section, span 6.0, chord .85
   const af=new THREE.Shape();af.moveTo(0,0);[[-.03,.035],[-.1,.065],[-.28,.085],[-.5,.07],[-.7,.035],[-.85,0],[-.6,-.012],[-.3,-.02],[-.08,-.018],[-.02,-.01]].forEach(([x,y])=>af.lineTo(x,y));af.closePath();
   const wingG=new THREE.ExtrudeGeometry(af,{depth:6,bevelEnabled:false,curveSegments:2});wingG.translate(0,0,-3);
-  const wing=part(wingG);wing.position.set(.15,.3,0);body.add(wing);
+  const wing=part(wingG);wing.position.set(.15,-.15,0);body.add(wing);
   // aileron + flap hinge lines (blue)
-  const hinge=[];[[2.0,2.95],[-2.95,-2.0],[.55,1.9],[-1.9,-.55]].forEach(([z0,z1],i)=>{const x=.15-.62,y=.3+.05;hinge.push(new THREE.Vector3(x,y,z0),new THREE.Vector3(x,y,z1),new THREE.Vector3(x,y,z0),new THREE.Vector3(-.7,y-.02,z0),new THREE.Vector3(x,y,z1),new THREE.Vector3(-.7,y-.02,z1));});
+  const hinge=[];[[2.0,2.95],[-2.95,-2.0],[.55,1.9],[-1.9,-.55]].forEach(([z0,z1],i)=>{const x=.15-.62,y=-.15+.05;hinge.push(new THREE.Vector3(x,y,z0),new THREE.Vector3(x,y,z1),new THREE.Vector3(x,y,z0),new THREE.Vector3(-.7,y-.02,z0),new THREE.Vector3(x,y,z1),new THREE.Vector3(-.7,y-.02,z1));});
   body.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(hinge),lineBlue));
   // twin carbon tail booms
-  [.89,-.89].forEach(z=>{const bm=part(new THREE.CylinderGeometry(.028,.028,2.45,8).rotateZ(Math.PI/2));bm.position.set(-1.05,.27,z);body.add(bm);});
+  [.89,-.89].forEach(z=>{const bm=part(new THREE.CylinderGeometry(.028,.028,2.8,8).rotateZ(Math.PI/2));bm.position.set(-1.22,-.12,z);body.add(bm);});
   // horizontal stabilizer
   const hsG=new THREE.ExtrudeGeometry((()=>{const t=new THREE.Shape();t.moveTo(0,0);t.lineTo(-.06,.03);t.lineTo(-.4,.035);t.lineTo(-.68,0);t.lineTo(-.4,-.012);t.lineTo(-.06,-.01);t.closePath();return t;})(),{depth:1.96,bevelEnabled:false});hsG.translate(0,0,-.98);
-  const hs=part(hsG);hs.position.set(-2.17,.27,0);body.add(hs);
+  const hs=part(hsG);hs.position.set(-2.52,-.12,0);body.add(hs);
   // elevator hinge
-  body.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-2.65,.31,-.9),new THREE.Vector3(-2.65,.31,.9)]),lineBlue));
+  body.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-3.0,-.08,-.9),new THREE.Vector3(-3.0,-.08,.9)]),lineBlue));
   // twin vertical fins at stabilizer tips
   const finS=new THREE.Shape();finS.moveTo(0,0);finS.lineTo(-.68,0);finS.lineTo(-.68,.46);finS.lineTo(-.3,.46);finS.closePath();
-  [.98,-.98].forEach(z=>{const fg=new THREE.ExtrudeGeometry(finS,{depth:.03,bevelEnabled:false});fg.translate(0,0,-.015);const f=part(fg);f.position.set(-2.17,.28,z);body.add(f);});
+  [.98,-.98].forEach(z=>{const fg=new THREE.ExtrudeGeometry(finS,{depth:.03,bevelEnabled:false});fg.translate(0,0,-.015);const f=part(fg);f.position.set(-2.52,-.11,z);body.add(f);});
   // pitot / GPS mast on top of pod
-  const mast=part(new THREE.CylinderGeometry(.012,.012,.32,6),lineBlue);mast.position.set(-.35,.5,.22);body.add(mast);
-  const gps=part(new THREE.CylinderGeometry(.07,.07,.03,12),lineBlue,fillB);gps.position.set(-.35,.67,.22);body.add(gps);
+  const mast=part(new THREE.CylinderGeometry(.012,.012,.32,6),lineBlue);mast.position.set(-.35,.36,.12);body.add(mast);
+  const gps=part(new THREE.CylinderGeometry(.07,.07,.03,12),lineBlue,fillB);gps.position.set(-.35,.53,.12);body.add(gps);
   // pusher motor + prop at pod tail
-  const mot=part(new THREE.CylinderGeometry(.09,.11,.16,12).rotateZ(Math.PI/2),lineBlue,fillB);mot.position.set(-.86,-.1,0);body.add(mot);
-  const prop=new THREE.Group();prop.position.set(-.97,-.1,0);
+  const mot=part(new THREE.CylinderGeometry(.09,.11,.16,12).rotateZ(Math.PI/2),lineBlue,fillB);mot.position.set(-1.95,-.12,0);body.add(mot);
+  const prop=new THREE.Group();prop.position.set(-2.06,-.12,0);
   prop.add(part(new THREE.ConeGeometry(.06,.12,10).rotateZ(Math.PI/2),lineBlue));
   [0,1].forEach(i=>{const b=part(new THREE.BoxGeometry(.03,.78,.1),lineBlue,fillB);b.rotation.x=i*Math.PI/2;b.children.forEach(c=>c.rotation.y=.35);prop.add(b);});
   const disc=new THREE.Mesh(new THREE.RingGeometry(.37,.4,48),new THREE.MeshBasicMaterial({color:BLUE,transparent:true,opacity:.25,side:THREE.DoubleSide}));disc.rotation.y=Math.PI/2;prop.add(disc);
   body.add(prop);
   // landing gear: nose strut + wheel, bow-shaped main legs
   const wheel=()=>{const w=part(new THREE.CylinderGeometry(.12,.12,.06,16).rotateX(Math.PI/2),lineInk,fillB);return w;};
-  const ns=part(new THREE.CylinderGeometry(.018,.018,.5,6));ns.position.set(1.0,-.6,0);body.add(ns);
-  const nw=wheel();nw.position.set(1.0,-.9,0);body.add(nw);
+  const ns=part(new THREE.CylinderGeometry(.018,.018,.5,6));ns.position.set(.85,-.6,0);body.add(ns);
+  const nw=wheel();nw.position.set(.85,-.9,0);body.add(nw);
   [1,-1].forEach(s=>{
-    const c=new THREE.CubicBezierCurve3(new THREE.Vector3(-.05,-.38,s*.16),new THREE.Vector3(-.05,-.3,s*.55),new THREE.Vector3(-.05,-.55,s*.68),new THREE.Vector3(-.05,-.86,s*.6));
+    const c=new THREE.CubicBezierCurve3(new THREE.Vector3(-.4,-.4,s*.16),new THREE.Vector3(-.4,-.3,s*.55),new THREE.Vector3(-.4,-.55,s*.68),new THREE.Vector3(-.4,-.86,s*.6));
     body.add(new THREE.Mesh(new THREE.TubeGeometry(c,24,.026,6),new THREE.MeshBasicMaterial({color:INK})));
-    const w=wheel();w.position.set(-.05,-.9,s*.64);body.add(w);
+    const w=wheel();w.position.set(-.4,-.9,s*.64);body.add(w);
   });
   // camera gimbal under nose
-  const gim=part(new THREE.SphereGeometry(.11,12,8),lineBlue,fillB);gim.position.set(1.15,-.38,0);body.add(gim);
-  plane.scale.setScalar(.9);
+  const gim=part(new THREE.SphereGeometry(.11,12,8),lineBlue,fillB);gim.position.set(1.0,-.36,0);body.add(gim);
+  plane.scale.setScalar(.82);
   scene.add(plane);
 
   // ground grid + flight ring
